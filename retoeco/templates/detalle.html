@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Detalles{% endblock %}
+
+{% block contenido %}
+{% set t = TIPOS[accion.tipo] %}
+<h1 class="titulo-pagina">🌿 Detalles de la acción</h1>
+
+<section class="tarjeta">
+  <div class="detalle-cab">
+    <div class="icono-grande {{ t.clase }}">{{ t.icono }}</div>
+    <div>
+      <h2>{{ accion.tipo }}</h2>
+      <p>{{ accion.descripcion }}</p>
+      <p class="suave">📅 {{ accion.fecha }}</p>
+    </div>
+    <div class="caja-impacto"><strong>{{ accion.cantidad|num }}</strong><span>{{ accion.unidad }}</span></div>
+  </div>
+
+  <div class="botones-form">
+    <a class="btn btn-azul" href="{{ url_for('main.editar', id=accion.id) }}">✏️ Editar</a>
+    <button type="button" class="btn btn-rojo"
+            data-eliminar="{{ url_for('main.eliminar', id=accion.id) }}"
+            data-nombre="{{ accion.descripcion }}">🗑 Eliminar</button>
+    <a class="btn btn-gris" href="{{ url_for('main.inicio') }}">← Volver</a>
+  </div>
+
+  <div class="impacto-amb">
+    <span>🌍</span>
+    <div><h3>Impacto ambiental</h3><p class="suave">{{ t.mensaje }}</p></div>
+  </div>
+</section>
+
+<section class="gracias">
+  <span>🌳</span>
+  <div><strong>¡Gracias por ser parte del cambio!</strong>
+  <p>Cada acción cuenta para un planeta más limpio y saludable.</p></div>
+</section>
+{% endblock %}

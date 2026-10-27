@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}{% endblock %} · Misión Eco-Reto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body class="{{ 'con-menu' if session.usuario_id else 'sin-menu' }}">
+
+{% if session.usuario_id %}
+  <aside class="menu">
+    <div class="logo">Misión 🌿<small>Eco-Reto</small></div>
+    <a href="{{ url_for('main.inicio') }}" class="{{ 'activo' if request.endpoint == 'main.inicio' else '' }}">🏠 <span>Inicio</span></a>
+    <a href="{{ url_for('main.inicio') }}#acciones">📋 <span>Mis acciones</span></a>
+    <a href="{{ url_for('main.nueva') }}" class="{{ 'activo' if request.endpoint == 'main.nueva' else '' }}">➕ <span>Nueva acción</span></a>
+    <a href="{{ url_for('main.inicio') }}#estadisticas">📊 <span>Estadísticas</span></a>
+    <a href="{{ url_for('main.logout') }}" class="salir">🚪 <span>Cerrar sesión</span></a>
+  </aside>
+
+  <div class="contenido">
+    <header class="topbar">
+  <form class="usuario-pill" action="{{ url_for('main.subir_foto') }}" method="post" enctype="multipart/form-data">
+    <label class="avatar-btn" title="Haz clic para cambiar tu foto">
+      {% if foto_perfil %}
+        <img class="avatar-mini" src="{{ url_for('static', filename='uploads/' ~ foto_perfil) }}" alt="Mi foto">
+      {% else %}
+        <span class="avatar-mini inicial">{{ session.usuario[0]|upper }}</span>
+      {% endif %}
+      <span class="lapiz">📷</span>
+      <input type="file" name="foto" accept="image/*" hidden onchange="this.form.submit()">
+    </label>
+    Hola, {{ session.usuario }}
+  </form>
+</header>
+    <main>
+      {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% for cat, txt in msgs %}<div class="mensaje {{ cat }}" role="alert">{{ txt }}</div>{% endfor %}
+      {% endwith %}
+      {% block contenido %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Ventana de confirmación para eliminar -->
+  <form id="form-eliminar" method="post" hidden></form>
+  <div class="modal" id="modal" hidden>
+    <div class="modal-caja">
+      <div class="modal-emoji">🗑️</div>
+      <h3>¿Eliminar esta acción?</h3>
+      <p id="modal-nombre" class="suave"></p>
+      <div class="modal-botones">
+        <button type="button" class="btn btn-gris" data-cerrar>Cancelar</button>
+        <button type="button" class="btn btn-rojo" id="confirmar-eliminar">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="portada">
+    <div class="hojas" aria-hidden="true"><span>🍃</span><span>🌿</span><span>🍃</span><span>🌱</span><span>🌿</span></div>
+    <div class="flashes-flotantes">
+      {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% for cat, txt in msgs %}<div class="mensaje {{ cat }}" role="alert">{{ txt }}</div>{% endfor %}
+      {% endwith %}
+    </div>
+    {% block publico %}{% endblock %}
+  </div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/validacion.js') }}"></script>
+</body>
+</html>

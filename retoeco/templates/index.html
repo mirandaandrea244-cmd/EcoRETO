@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+
+{% block contenido %}
+<section class="bienvenida">
+  <div>
+    <h1>¡Bienvenido a Misión Eco-Reto!</h1>
+    <p>Registra, consulta y comparte las acciones que ayudan al planeta.</p>
+    <a class="btn btn-primario" href="{{ url_for('main.nueva') }}">➕ Nueva acción</a>
+  </div>
+  <div class="planta" aria-hidden="true">🌱</div>
+</section>
+
+<section id="estadisticas" class="stats">
+  <article class="stat verde"><span class="stat-icono">🍃</span>
+    <div><strong>{{ stats.total }}</strong><small>Acciones registradas</small></div></article>
+  <article class="stat azul"><span class="stat-icono">💧</span>
+    <div><strong>{{ stats.litros|num }}</strong><small>Litros de agua ahorrados</small></div></article>
+  <article class="stat amarillo"><span class="stat-icono">♻️</span>
+    <div><strong>{{ stats.kg|num }}</strong><small>Kg de material reciclado</small></div></article>
+  <article class="stat rosa"><span class="stat-icono">☁️</span>
+    <div><strong>{{ stats.co2|num }} kg</strong><small>CO₂ evitado</small></div></article>
+</section>
+
+<section id="acciones" class="tarjeta">
+  <div class="tarjeta-cab">
+    <h2>Mis acciones registradas</h2>
+    <input id="buscador" type="search" placeholder="🔍 Buscar acción…">
+  </div>
+
+  {% if acciones %}
+  <div class="chips">
+    <button type="button" class="chip activo" data-tipo="todos">Todas</button>
+    {% for nombre, t in TIPOS.items() %}
+      <button type="button" class="chip" data-tipo="{{ nombre }}">{{ t.icono }} {{ nombre }}</button>
+    {% endfor %}
+  </div>
+
+  <div class="tabla-scroll">
+    <table id="tabla-acciones">
+      <thead>
+        <tr><th>#</th><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Impacto</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {% for a in acciones %}
+        <tr data-tipo="{{ a.tipo }}" data-texto="{{ (a.tipo ~ ' ' ~ a.descripcion ~ ' ' ~ a.fecha)|lower }}">
+          <td>{{ loop.index }}</td>
+          <td>{{ a.fecha }}</td>
+          <td><span class="badge {{ TIPOS[a.tipo].clase }}">{{ TIPOS[a.tipo].icono }} {{ a.tipo }}</span></td>
+          <td>{{ a.descripcion }}</td>
+          <td><strong>{{ a.cantidad|num }}</strong> {{ a.unidad }}</td>
+          <td class="botones-fila">
+            <a class="btn-icono verde-b" href="{{ url_for('main.detalle', id=a.id) }}" title="Ver detalles">👁</a>
+            <a class="btn-icono azul-b" href="{{ url_for('main.editar', id=a.id) }}" title="Editar">✏️</a>
+            <button type="button" class="btn-icono rojo-b" title="Eliminar"
+                    data-eliminar="{{ url_for('main.eliminar', id=a.id) }}"
+                    data-nombre="{{ a.descripcion }}">🗑</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p id="sin-resultados" class="vacio" hidden>No encontramos acciones con ese filtro 🔎</p>
+  {% else %}
+  <div class="vacio">
+    <div class="vacio-emoji">🌱</div>
+    <p>Aún no tienes acciones. ¡Tu primera acción verde te espera!</p>
+    <a class="btn btn-primario" href="{{ url_for('main.nueva') }}">Registrar mi primera acción</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

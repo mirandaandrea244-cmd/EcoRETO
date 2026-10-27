@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar acción' if modo == 'editar' else 'Nueva acción' }}{% endblock %}
+
+{% block contenido %}
+<section class="tarjeta formulario">
+  <div class="form-cab">
+    <span class="icono-cab">{{ '✏️' if modo == 'editar' else '🌿' }}</span>
+    <div>
+      <h1>{{ 'Editar acción' if modo == 'editar' else 'Nueva acción ecológica' }}</h1>
+      <p class="suave">{{ 'Modifica la información de tu acción.' if modo == 'editar' else 'Registra una nueva acción que ayude al planeta.' }}</p>
+    </div>
+  </div>
+
+  <form id="form-accion" method="post" novalidate data-modo="{{ modo }}">
+    <div class="campo">
+      <label for="tipo">Tipo de acción</label>
+      <select id="tipo" name="tipo" required>
+        <option value="">Selecciona una opción…</option>
+        {% for nombre, t in TIPOS.items() %}
+          <option value="{{ nombre }}" data-unidad="{{ t.unidad }}" {{ 'selected' if accion.tipo == nombre else '' }}>{{ t.icono }} {{ nombre }}</option>
+        {% endfor %}
+      </select>
+      <span class="aviso-error" id="error-tipo"></span>
+    </div>
+
+    <div class="campo">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="3" maxlength="120" placeholder="Escribe qué hiciste…">{{ accion.descripcion or '' }}</textarea>
+      <div class="linea-aviso"><span class="aviso-error" id="error-descripcion"></span><small id="contador" class="suave">0/120</small></div>
+    </div>
+
+    <div class="campo">
+      <label for="fecha">Fecha</label>
+      <input type="date" id="fecha" name="fecha" value="{{ accion.fecha or '' }}">
+      <span class="aviso-error" id="error-fecha"></span>
+    </div>
+
+    <div class="campo">
+      <label for="cantidad">Impacto</label>
+      <div class="fila-impacto">
+        <input type="number" id="cantidad" name="cantidad" step="any" min="0" placeholder="Ej. 5, 50…" value="{{ accion.cantidad or '' }}">
+        <select id="unidad" name="unidad">
+          {% for u in UNIDADES %}<option value="{{ u }}" {{ 'selected' if accion.unidad == u else '' }}>{{ u }}</option>{% endfor %}
+        </select>
+      </div>
+      <span class="aviso-error" id="error-cantidad"></span>
+    </div>
+
+    <div class="botones-form">
+      <button type="submit" class="btn btn-primario">{{ '💾 Actualizar' if modo == 'editar' else '➕ Guardar acción' }}</button>
+      <a class="btn btn-gris" href="{{ url_for('main.inicio') }}">✖ Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

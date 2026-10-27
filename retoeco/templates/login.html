@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Crear cuenta' if modo == 'registro' else 'Iniciar sesión' }}{% endblock %}
+
+{% block publico %}
+<div class="marca-grande">
+  <div class="planeta">🌍</div>
+  <h1>Misión <span>Eco-Reto</span></h1>
+  <p>Pequeñas acciones, grandes cambios</p>
+</div>
+
+<div class="tarjeta-login">
+  <div class="hoja-login">🍃</div>
+  <h2>{{ 'Crear cuenta' if modo == 'registro' else 'Iniciar sesión' }}</h2>
+  <p class="suave">{{ 'Regístrate para guardar tus acciones ecológicas.' if modo == 'registro' else 'Ingresa para registrar tus acciones ecológicas.' }}</p>
+
+  <form method="post">
+    <div class="campo">
+      <label for="usuario">👤 Usuario</label>
+      <input id="usuario" name="usuario" required placeholder="Tu usuario" autocomplete="username">
+    </div>
+    <div class="campo">
+      <label for="password">🔒 Contraseña</label>
+      <div class="con-boton">
+        <input type="password" id="password" name="password" required placeholder="Tu contraseña"
+               autocomplete="{{ 'new-password' if modo == 'registro' else 'current-password' }}">
+        <button type="button" class="ver" data-ver-pass="password" aria-label="Mostrar contraseña">👁</button>
+      </div>
+    </div>
+    <button class="btn btn-primario ancho" type="submit">{{ 'Crear cuenta' if modo == 'registro' else 'Entrar' }}</button>
+  </form>
+
+  <p class="cambio">
+    {% if modo == 'registro' %}¿Ya tienes cuenta? <a href="{{ url_for('main.login') }}">Inicia sesión</a>
+    {% else %}¿No tienes cuenta? <a href="{{ url_for('main.registro') }}">Regístrate</a>{% endif %}
+  </p>
+</div>
+{% endblock %}
